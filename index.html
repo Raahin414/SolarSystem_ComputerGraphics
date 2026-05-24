@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cinematic Mini Solar System — Real-Time Graphics Showcase</title>
+    <meta
+      name="description"
+      content="A cinematic mini solar system demonstrating hierarchical motion, realistic lighting, reflections, GLSL glow shaders, bloom, fog, and tone mapping."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --panel: rgba(8, 13, 20, 0.58);
+        --panel-strong: rgba(8, 13, 20, 0.82);
+        --text: #eef4ff;
+        --muted: rgba(238, 244, 255, 0.72);
+        --accent: #ffd7a1;
+        --accent-2: #8dd8ff;
+        --line: rgba(255, 255, 255, 0.16);
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at top, rgba(61, 95, 137, 0.28), transparent 34%),
+          radial-gradient(circle at bottom right, rgba(123, 77, 54, 0.16), transparent 34%),
+          linear-gradient(180deg, #05070d 0%, #07101a 48%, #040507 100%);
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        color: var(--text);
+      }
+
+      canvas {
+        display: block;
+      }
+
+      #ui {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto 1fr auto;
+        padding: 28px;
+      }
+
+      #panel {
+        align-self: start;
+        max-width: min(38rem, calc(100vw - 56px));
+        background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 22px 24px 20px;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        color: var(--accent-2);
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 35% 35%, #fff 0%, var(--accent-2) 35%, rgba(141, 216, 255, 0.18) 70%, transparent 72%);
+        box-shadow: 0 0 18px rgba(141, 216, 255, 0.72);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.5rem, 5vw, 4.6rem);
+        line-height: 0.92;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        text-wrap: balance;
+      }
+
+      p {
+        margin: 14px 0 0;
+        font-size: 0.98rem;
+        line-height: 1.6;
+        color: var(--muted);
+        max-width: 52ch;
+      }
+
+      #status {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 0.82rem;
+        color: var(--text);
+      }
+
+      .chip span {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #66e09d;
+        box-shadow: 0 0 10px rgba(102, 224, 157, 0.75);
+      }
+
+      .chip.off span {
+        background: #ff7070;
+        box-shadow: 0 0 10px rgba(255, 112, 112, 0.65);
+      }
+
+      #hint {
+        align-self: end;
+        justify-self: start;
+        max-width: 34rem;
+        pointer-events: none;
+      }
+
+      #hint {
+        display: inline-flex;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.34);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(236, 244, 255, 0.8);
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 720px) {
+        #ui {
+          padding: 16px;
+        }
+
+        #panel {
+          max-width: calc(100vw - 32px);
+          border-radius: 20px;
+          padding: 18px 18px 16px;
+        }
+
+        #hint {
+          max-width: calc(100vw - 32px);
+          margin-top: 12px;
+        }
+
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ui">
+      <section id="panel">
+        <div class="eyebrow">Computer Graphics Showcase</div>
+        <h1>Cinematic Mini Solar System</h1>
+        <p>
+          A clean real-time scene focused on orbital hierarchy, physically based materials,
+          sun-driven lighting, environment reflections, glow shaders, bloom, and depth fog.
+        </p>
+        <div id="status">
+          <div class="chip" id="hdriStatus"><span></span>HDRI loading...</div>
+          <div class="chip" id="objectStatus"><span></span>Building system...</div>
+          <div class="chip" id="renderStatus"><span></span>Render pipeline</div>
+        </div>
+      </section>
+      <div></div>
+      <div id="hint">Drag to orbit · Scroll to zoom · The sun drives lighting, planets orbit hierarchically, and the metal knot shows environment reflections.</div>
+    </div>
+    <script type="module" src="/solarSystem.js"></script>
+  </body>
+</html>
