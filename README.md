@@ -1,71 +1,58 @@
-# Cinematic Mini Solar System
+# Cinematic Mini Solar System (Pure WebGL)
 
-A real-time computer graphics project built as a stylized mini solar system. The scene is designed to feel cinematic rather than physically exact: the Sun is the main focal point, the planets orbit hierarchically, and the lighting, bloom, fog, and background all work together to keep the image readable and atmospheric.
+A stylized, real-time mini solar system implemented in pure WebGL2 and GLSL. This repository contains a single canonical demo using raw WebGL.
 
-This repository contains the version of the project that is currently being used for submission. It is built with Three.js, custom GLSL shaders, procedural planet textures, environment lighting, and post-processing.
+## Highlights
 
-## What’s in the scene
-
-- Sun with emissive glow and animated surface detail
-- Orbiting planets with custom procedural textures
-- Moon system attached to a planet hierarchy
-- Reflective decorative object for material and lighting contrast
-- Debris field / asteroid-style clusters
-- Starfield background and fog for depth
-- Bloom and tone mapping for the final cinematic look
+- Shader-driven Sun glow with a timed pulse
+- Orbiting planets with procedural and image-based textures
+- Hierarchical moon orbits and debris clusters
+- Bloom post-processing and simple ACES-like tone mapping
+- Fog and atmospheric depth implemented in GLSL
 
 ## Tech stack
 
-- Three.js
-- GLSL shader materials
-- EffectComposer post-processing
-- OrbitControls for camera interaction
-- Procedural canvas-based textures
-- Vite for local development and bundling
+- WebGL2 + GLSL (shader sources in `webgl-solar-system/shaders/`)
+- `gl-matrix` (bundled at `webgl-solar-system/lib/gl-matrix.js`) for math
+- Vite — dev server and build tooling
 
-## What was built, in order
+## Quick start (development)
 
-1. Set up the real-time scene runtime with Three.js and Vite.
-2. Built the Sun, orbiting planets, moon system, and debris field.
-3. Added procedural planet textures, lighting, fog, and a starfield background.
-4. Added bloom, tone mapping, and environment lighting for the final cinematic look.
-5. Tuned the visuals, captured screenshots, and prepared the project for submission.
-
-## Controls
-
-- Drag to orbit the camera
-- Scroll to zoom in and out
-
-## Run locally
-
-From the project root:
+From the project root, install dev tools then run the demo directly with Vite:
 
 ```bash
 npm install
-npm run dev
+npx vite webgl-solar-system --port 5182
 ```
 
-Then open the local Vite address shown in the terminal.
+Open the URL printed by Vite (for example `http://localhost:5182`).
 
-## Project structure
+## Project layout (key files)
 
-- `index.html` - app shell and on-screen UI
-- `solarSystem.js` - main entry point
-- `scene/` - scene runtime, solar system construction, animation
-- `shaders/` - custom sun glow shaders
-- `utils/` - asset helpers and environment loading
-- `screenshots/` - saved renders from the current build
+- [webgl-solar-system/index.html](webgl-solar-system/index.html)
+- [webgl-solar-system/src/main.js](webgl-solar-system/src/main.js) — bootstrap, render loop, post-process chain
+- [webgl-solar-system/src/renderer.js](webgl-solar-system/src/renderer.js) — GL helpers, shader compilation
+- [webgl-solar-system/src/scene.js](webgl-solar-system/src/scene.js) — scene construction and update logic
+- [webgl-solar-system/src/shaders.js](webgl-solar-system/src/shaders.js) and [webgl-solar-system/shaders/](webgl-solar-system/shaders/) — GLSL sources
+- [webgl-solar-system/src/textureLoader.js](webgl-solar-system/src/textureLoader.js) — image/cubemap loaders
+- [webgl-solar-system/src/camera.js](webgl-solar-system/src/camera.js) — orbit camera
+- [webgl-solar-system/lib/gl-matrix.js](webgl-solar-system/lib/gl-matrix.js)
+- `screenshots/` — example captures used for documentation
 
-## Screenshots
+## Implementation notes
 
-Current screenshots from the running build are saved here:
+- Everything in `webgl-solar-system/` is implemented with WebGL2 and GLSL (VAO/VBO/EBO, FBO-based postprocessing).
+- The demo includes a multi-pass bloom (extract → blur → composite), Phong lighting in the fragment shader, fog, and environment cubemap support via the bundled texture loader.
 
-- `screenshots/solar-system-01.png`
-- `screenshots/solar-system-02.png`
-- `screenshots/solar-system-03.png`
+## Troubleshooting
 
-## Notes
+- If the canvas is blank, check the browser console for shader compile errors and ensure your GPU/browser supports WebGL2.
+- If HDR/cubemap assets are missing, the demo falls back to built-in defaults; add assets to `webgl-solar-system/assets/` if desired.
 
-- The project is focused on visual quality, depth, and a clean lighting hierarchy.
-- If an HDRI or texture is unavailable, the scene still loads with fallback behavior.
-- The final report can reference the saved screenshots in the `screenshots/` folder.
+## Credits & licenses
+
+- HDRI assets (if used) are from Poly Haven — include attribution per their license when publishing.
+
+---
+
+Note: These changes are local only. I will not run any `git` commit or push unless you say "go." 

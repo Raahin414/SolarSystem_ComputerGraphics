@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebGL Mini Solar System</title>
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #050914; font-family: Segoe UI, sans-serif; }
+    #glCanvas { width: 100%; height: 100%; display: block; }
+    #hud { position: fixed; top: 14px; left: 14px; padding: 10px 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 10px; background: rgba(7,13,26,.66); color: #e8f0ff; }
+    #hud h1 { margin: 0 0 6px; font-size: 1rem; }
+    #hud p { margin: 0; font-size: .85rem; color: #b8c7e4; }
+    #status { margin-top: 6px; font-size: .8rem; color: #ffd79a; }
+  </style>
+</head>
+<body>
+  <canvas id="glCanvas"></canvas>
+  <div id="hud">
+    <h1>Pure WebGL Solar System</h1>
+    <p>Drag to orbit, scroll to zoom.</p>
+    <div id="status">Booting renderer...</div>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
